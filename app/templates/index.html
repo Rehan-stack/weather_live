@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather App</title>
+</head>
+<body>
+    <h1>Weather App</h1>
+    <!-- <input type="text" id="cityInput" placeholder="Enter city">
+    <button onclick="getWeather()">Get Weather</button> -->
+    <ul id="weatherInfolist"></ul>
+    <script>
+        const socket = new WebSocket('ws://127.0.0.1:8000/ws/weather/city_name/');
+    //     socket.onmessage = function (e) {
+    //         const data = JSON.parse(e.data);
+    //         document.getElementById('weatherInfo').innerText += "<pre>" + JSON.stringify(data, null, 2)   + "<pre>";
+    //     };
+
+       
+    //    const cities = {{ cities|safe }};
+
+    //     cities.forEach(city => {
+    //         socket.send(JSON.stringify({ city:city }));
+    //     });
+
+    //     // function getWeather() {
+    //     //     const city = document.getElementById('cityInput').value;
+    //     //     socket.send(JSON.stringify({ city: city }));
+    //     // }
+
+
+
+    //     const socket = new WebSocket('ws://your_server/ws/weather/'); // Replace 'your_server' with your actual server URL or IP address
+
+socket.onopen = function () {
+    // WebSocket is open, now you can send data
+    const cities = {{ cities|safe }};
+    cities.forEach(city => {
+        socket.send(JSON.stringify({ city: city }));
+    });
+};
+
+socket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+    const weatherInfolist = document.getElementById('weatherInfolist');
+    const listItem =  document.createElement('li');
+    listItem.innerText = JSON.stringify(data, null, 2);
+    weatherInfolist.appendChild(listItem);
+};
+
+socket.onerror = function (error) {
+   
+    console.error('WebSocket Error:', error);
+};
+
+socket.onclose = function (event) {
+    
+    if (event.code === 1000) {
+        console.log('WebSocket closed cleanly');
+    } else {
+        console.error('WebSocket Error:', event.code, event.reason);
+    }
+};
+    </script>
+</body>
+</html>
